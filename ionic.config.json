@@ -1,0 +1,7 @@
+{
+  "name": "gys-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
