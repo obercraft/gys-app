@@ -9,11 +9,25 @@
         <ion-content class="background">
             <ion-slides pager="true" :options="slideOpts" ref="slider">
 
+                <!-- Welche Antriebsform ist verbaut? 
+
+
+                Festpropeller													
+                Saildrive
+
+                -->
+                <toggle-button value="Saildrive" @change="ship.propel = $event"></toggle-button>
+                {{ship.propel}}
+
+
+
                 <!-- Welches System soll montiert werden? -->
                 <ion-slide>
                     <ion-card>
                         <ion-card-header>
-                            <ion-card-title>Welches System soll montiert werden?</ion-card-title>
+                            <ion-card-title>Welches System soll montiert werden?
+                                p={{ship.propel}}
+                            </ion-card-title>
                         </ion-card-header>
                         <ion-card-content>
 
@@ -552,7 +566,7 @@
                 </ion-slide>
             </ion-slides>
         </ion-content>
-        <ion-fab vertical="bottom" horizontal="end">
+        <ion-fab vertical="bottom" horizontal="end" v-show="!loading">
             <ion-fab-button @click="save()">
                 <ion-icon name="save"></ion-icon>
             </ion-fab-button>
@@ -599,6 +613,8 @@
         arrowForwardSharp
     } from "ionicons/icons";
 
+    import ToggleButton from "../components/ToggleButton"
+
     addIcons({information, save, arrowBackOutline, arrowForwardOutline, arrowBackSharp, arrowForwardSharp});
 
     import {defineComponent, ref} from 'vue';
@@ -632,7 +648,7 @@
             IonSelect, IonSelectOption, IonTextarea,
             // IonRow, IonCol, IonGrid,
             //IonToggle
-
+            ToggleButton,
         },
 
         setup() {
@@ -648,8 +664,12 @@
         data() {
             return {
                 ship: {},
+                loading: true,
                 id: this.$route.params.id,
             }
+        },
+        computed: {
+
         },
         mounted() {
             this.queryShip(this.$route.params.id);
@@ -665,9 +685,12 @@
         methods:
             {
                 queryShip(id) {
+                    this.loading. true;
                     shipStorage.getShip("ship_" + id).then(ship => {
                         this.ship = JSON.parse(ship.value);
-                    });
+                    }).finally(() => {
+                        this.loading = false;
+                    }) ;
                 }
                 ,
                 save() {
