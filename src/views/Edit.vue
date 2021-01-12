@@ -9,31 +9,28 @@
         <ion-content class="background">
             <ion-slides pager="true" :options="slideOpts" ref="slider">
 
-                <!-- Welche Antriebsform ist verbaut? 
-
-
-                Festpropeller													
-                Saildrive
-
-                -->
-                <toggle-button value="Saildrive" @change="ship.propel = $event"></toggle-button>
-                {{ship.propel}}
-
-
+                <!-- Welche Antriebsform ist verbaut?  -->
 
                 <!-- Welches System soll montiert werden? -->
                 <ion-slide>
                     <ion-card>
-                        <ion-card-header>
-                            <ion-card-title>Welches System soll montiert werden?
-                                p={{ship.propel}}
+                        <ion-card-header class="cardheader">
+                            <ion-card-title class="cardtitle">
+                                Welche Antriebsform ist verbaut?
                             </ion-card-title>
                         </ion-card-header>
                         <ion-card-content>
-
-
+                            <toggle-button v-model:target="ship.propulsion"
+                                           :buttons="propulsionButtons" />
                             <ion-list>
+                                <ion-item-group>
+                                <ion-item-divider class="divider">
+                                    <ion-label>Welches System soll montiert werden?</ion-label>
+                                </ion-item-divider>
+
+
                                 <ion-radio-group v-model="ship.system">
+                                    <!--
                                     <ion-item>
                                         <ion-radio value="Green Yacht Solution"></ion-radio>
                                         <ion-label>Green Yacht Solution</ion-label>
@@ -41,8 +38,9 @@
                                             <ion-icon name="information"></ion-icon>
                                         </ion-button>
                                     </ion-item>
+                                    -->
 
-                                    <ion-item>
+                                    <ion-item v-show="green || red">
                                         <ion-radio value="Oceanvolt"></ion-radio>
                                         <ion-label>Oceanvolt</ion-label>
                                         <ion-button @click="open('info2.pdf')">
@@ -50,7 +48,7 @@
                                         </ion-button>
                                     </ion-item>
 
-                                    <ion-item>
+                                    <ion-item v-show="green">
                                         <ion-radio value="Waterworld"></ion-radio>
                                         <ion-label>Waterworld</ion-label>
                                         <ion-button @click="open('info3.pdf')">
@@ -58,7 +56,7 @@
                                         </ion-button>
                                     </ion-item>
 
-                                    <ion-item>
+                                    <ion-item v-show="green || red">
                                         <ion-radio value="Torqeedo"></ion-radio>
                                         <ion-label>Torqeedo</ion-label>
                                         <ion-button @click="open('info4.pdf')">
@@ -71,6 +69,7 @@
                                     <ion-label>Anderer</ion-label>
                                     <ion-input v-model="ship.systemName"></ion-input>
                                 </ion-item>
+                                </ion-item-group>
                             </ion-list>
 
                         </ion-card-content>
@@ -80,8 +79,8 @@
                 <!-- Wie viel kW wird benötigt? -->
                 <ion-slide>
                     <ion-card>
-                        <ion-card-header>
-                            <ion-card-title>
+                        <ion-card-header class="cardheader">
+                            <ion-card-title class="cardtitle">
                                 Wie viel kW wird benötigt?
                             </ion-card-title>
                         </ion-card-header>
@@ -98,18 +97,14 @@
                                     m
                                 </ion-item>
                                 <ion-item>
-                                    <ion-label>Antrieb</ion-label>
-                                    <ion-select v-model="ship.drive" placeholder="Antrieb wählen">
-                                        <ion-select-option>Festpropeller</ion-select-option>
-                                        <ion-select-option>Saildrive</ion-select-option>
-                                    </ion-select>
+                                    <ion-label>Bugstrahl</ion-label>
+                                    <toggle-button v-model:target="ship.bowStream"
+                                                   :buttons="yesnoButtons"></toggle-button>
                                 </ion-item>
                                 <ion-item>
-                                    <ion-label>Bugstrahl</ion-label>
-                                    <ion-select v-model="ship.bowStream" placeholder="Bugstrahl?">
-                                        <ion-select-option>Ja</ion-select-option>
-                                        <ion-select-option>Nein</ion-select-option>
-                                    </ion-select>
+                                    <ion-label>Ankerwinde</ion-label>
+                                    <toggle-button v-model:target="ship.anchor"
+                                                   :buttons="yesnoButtons"></toggle-button>
                                 </ion-item>
 
                                 <ion-item>
@@ -139,91 +134,97 @@
                 <!-- Wie viel Energie muss gespeichert werden können? -->
                 <ion-slide>
                     <ion-card>
-                        <ion-card-header>
-                            <ion-card-title>
-                                Wie viel Energie muss gespeichert werden können?
+                        <ion-card-header class="cardheader">
+                            <ion-card-title class="cardtitle">
+                                Batterie-Art
                             </ion-card-title>
                         </ion-card-header>
                         <ion-card-content>
-                            <ion-list>
 
-                                <ion-item>
-                                    <ion-label>Batterie-Art</ion-label>
-                                    <ion-select v-model="ship.batteryType" placeholder="Batterie-Art wählen">
-                                        <ion-select-option>AGM</ion-select-option>
-                                        <ion-select-option>Lithium-Ionen</ion-select-option>
-                                    </ion-select>
-                                </ion-item>
-                            </ion-list>
+                            <toggle-button v-model:target="ship.batteryType"
+                                           :buttons="batteryTypeButtons"></toggle-button>
+
 
                             <ion-list>
-                                <ion-list-header>
-                                    <ion-label>Batterie-Hersteller</ion-label>
-                                </ion-list-header>
-                                <ion-radio-group v-model="ship.batteryBrand">
+
+                                <ion-item-group>
+                                    <ion-item-divider class="divider">
+                                        <ion-label>Batterie-Hersteller</ion-label>
+                                    </ion-item-divider>
+                                    <ion-radio-group v-model="ship.batteryBrand">
+                                        <ion-item v-show="blue || orange">
+                                            <ion-radio value="Victron"></ion-radio>
+                                            <ion-label>Victron</ion-label>
+                                            <ion-button @click="open('batt1.pdf')">
+                                                <ion-icon name="information"></ion-icon>
+                                            </ion-button>
+                                        </ion-item>
+
+                                        <ion-item v-show="orange">
+                                            <ion-radio value="Torqueedo"></ion-radio>
+                                            <ion-label>Torqueedo</ion-label>
+                                            <ion-button @click="open('batt2.pdf')">
+                                                <ion-icon name="information"></ion-icon>
+                                            </ion-button>
+                                        </ion-item>
+
+                                        <ion-item v-show="orange">
+                                            <ion-radio value="CS-Batteries"></ion-radio>
+                                            <ion-label>CS-Batteries</ion-label>
+                                            <ion-button @click="open('batt3.pdf')">
+                                                <ion-icon name="information"></ion-icon>
+                                            </ion-button>
+                                        </ion-item>
+
+                                        <ion-item v-show="blue">
+                                            <ion-radio value="Aquamot"></ion-radio>
+                                            <ion-label>Aquamot</ion-label>
+                                            <ion-button @click="open('batt3.pdf')">
+                                                <ion-icon name="information"></ion-icon>
+                                            </ion-button>
+                                        </ion-item>
+
+                                    </ion-radio-group>
+
                                     <ion-item>
-                                        <ion-radio value="Victron"></ion-radio>
-                                        <ion-label>Victron</ion-label>
-                                        <ion-button @click="open('batt1.pdf')">
-                                            <ion-icon name="information"></ion-icon>
-                                        </ion-button>
+                                        <ion-label>Anderer</ion-label>
+                                        <ion-input v-model="ship.batteryBrandName"></ion-input>
+                                    </ion-item>
+                                </ion-item-group>
+
+
+                                <ion-item-group>
+                                    <ion-item-divider class="divider">
+                                        <ion-label>Wie weit und lange soll man
+                                            fahren können?&nbsp;
+                                        </ion-label>
+                                    </ion-item-divider>
+
+                                    <ion-item>
+                                        <ion-label>Zeit</ion-label>
+                                        <ion-input type="number" v-model="ship.runTime"></ion-input>
+                                        Std.
                                     </ion-item>
 
                                     <ion-item>
-                                        <ion-radio value="Torqueedo"></ion-radio>
-                                        <ion-label>Torqueedo</ion-label>
-                                        <ion-button @click="open('batt2.pdf')">
-                                            <ion-icon name="information"></ion-icon>
-                                        </ion-button>
+                                        <ion-label>Strecke</ion-label>
+                                        <ion-input type="number" v-model="ship.runLength"></ion-input>
+                                        sm
                                     </ion-item>
 
+                                </ion-item-group>
+
+                                <ion-item-group>
+                                    <ion-item-divider class="divider">
+                                        <ion-label>
+                                            Welche Verbraucher sind noch an Bord?
+                                        </ion-label>
+                                    </ion-item-divider>
                                     <ion-item>
-                                        <ion-radio value="CS-Battries"></ion-radio>
-                                        <ion-label>CS-Battries</ion-label>
-                                        <ion-button @click="open('batt3.pdf')">
-                                            <ion-icon name="information"></ion-icon>
-                                        </ion-button>
+                                        <ion-textarea v-model="ship.batteryOther"></ion-textarea>
                                     </ion-item>
-                                </ion-radio-group>
 
-                                <ion-item>
-                                    <ion-label>Anderer</ion-label>
-                                    <ion-input v-model="ship.batteryBrandName"></ion-input>
-                                </ion-item>
-
-                            </ion-list>
-
-                            <ion-list>
-                                <ion-list-header>
-                                    <ion-label>Wie weit und lange soll man
-                                        fahren können?
-                                    </ion-label>
-                                </ion-list-header>
-
-                                <ion-item>
-                                    <ion-label>Zeit</ion-label>
-                                    <ion-input type="number" v-model="ship.runTime"></ion-input>
-                                    Std.
-                                </ion-item>
-
-                                <ion-item>
-                                    <ion-label>Strecke</ion-label>
-                                    <ion-input type="number" v-model="ship.runLength"></ion-input>
-                                    sm
-                                </ion-item>
-
-
-                            </ion-list>
-
-                            <ion-list>
-                                <ion-list-header>
-                                    <ion-label>
-                                        Welche Verbraucher sind noch an Bord?
-                                    </ion-label>
-                                </ion-list-header>
-                                <ion-item>
-                                    <ion-textarea v-model="ship.batteryOther"></ion-textarea>
-                                </ion-item>
+                                </ion-item-group>
                             </ion-list>
                         </ion-card-content>
                     </ion-card>
@@ -367,7 +368,9 @@
 
                             <ion-list>
                                 <ion-list-header>
-                                    <ion-title>Ist die Beleuchtung auf LED umgerüstet und gibt es weitere Einsparmöglichkeiten?</ion-title>
+                                    <ion-title>Ist die Beleuchtung auf LED umgerüstet und gibt es weitere
+                                        Einsparmöglichkeiten?
+                                    </ion-title>
                                 </ion-list-header>
 
 
@@ -469,22 +472,12 @@
                     <ion-card>
                         <ion-card-header>
                             <ion-card-title>
-                                Fahrhebel
+                                Soll der aktuelle Fahrhebel genutzt und somit umgebaut werden?
                             </ion-card-title>
                         </ion-card-header>
                         <ion-card-content>
-                            <ion-list>
-                                <ion-list-header>
-                                    <ion-title>Soll der aktuelle Fahrhebel genutzt und somit umgebaut werden?</ion-title>
-                                </ion-list-header>
-
-                                <ion-item>
-                                    <ion-select v-model="ship.driver" placeholder="Fahrhebel?">
-                                        <ion-select-option>Ja</ion-select-option>
-                                        <ion-select-option>Nein</ion-select-option>
-                                    </ion-select>
-                                </ion-item>
-                            </ion-list>
+                            <toggle-button v-model:target="ship.driver"
+                                           :buttons="yesnoButtons"></toggle-button>
 
                             <ion-list v-show="ship.driver === 'Nein'">
 
@@ -543,6 +536,169 @@
                     </ion-card>
                 </ion-slide>
 
+                <!-- Maßaufnahme des Motorfundaments -->
+                <ion-slide>
+                    <ion-card>
+                        <ion-card-header>
+                            <ion-card-title>
+                                Maßaufnahme des Motorfundaments {{ship.propulsion}}
+                            </ion-card-title>
+                        </ion-card-header>
+
+                        <ion-card-content v-show="green">
+                            <ion-list>
+                                <ion-item>
+                                    <ion-title>Winkel Gerade Motorfundament und Propellerwelle</ion-title>
+                                </ion-item>
+                                <ion-item>
+                                    <ion-input type="number" v-model="ship.engineDegree"></ion-input>
+                                    &deg;Grad
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-title>Motorraum</ion-title>
+                                </ion-item>
+                                <ion-item>
+                                    <ion-label>Höhe</ion-label>
+                                    <ion-input type="number" v-model="ship.engineHeight"></ion-input>
+                                    mm
+                                </ion-item>
+                                <ion-item>
+                                    <ion-label>Breite</ion-label>
+                                    <ion-input type="number" v-model="ship.engineWidth"></ion-input>
+                                    mm
+                                </ion-item>
+                                <ion-item>
+                                    <ion-label>Tiefe</ion-label>
+                                    <ion-input type="number" v-model="ship.engineDepth"></ion-input>
+                                    mm
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-title>Fundament</ion-title>
+                                </ion-item>
+                                <ion-item>
+                                    <ion-label>Höhe</ion-label>
+                                    <ion-input type="number" v-model="ship.foundationHeight"></ion-input>
+                                    mm
+                                </ion-item>
+                                <ion-item>
+                                    <ion-label>Breite</ion-label>
+                                    <ion-input type="number" v-model="ship.foundationWidth"></ion-input>
+                                    mm
+                                </ion-item>
+                                <ion-item>
+                                    <ion-label>Tiefe</ion-label>
+                                    <ion-input type="number" v-model="ship.foundationDepth"></ion-input>
+                                    mm
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-label>Fundamentstegbreite</ion-label>
+                                    <ion-input type="number" v-model="ship.foundationWay"></ion-input>
+                                    mm
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-label>Wellendurchmesser</ion-label>
+                                    <ion-input type="number" v-model="ship.waveDiameter"></ion-input>
+                                    mm
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-title>Weg Welle zum Anfang Fundament</ion-title>
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-input type="number" v-model="ship.waveDiameter"></ion-input>
+                                    mm
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-title>Fundamentbolzen</ion-title>
+                                </ion-item>
+                                <ion-item>
+                                    <ion-label>Höhe</ion-label>
+                                    <ion-input type="number" v-model="ship.foundationBoltHeight"></ion-input>
+                                    mm
+                                </ion-item>
+                                <ion-item>
+                                    <ion-label>Breite</ion-label>
+                                    <ion-input type="number" v-model="ship.foundationBoltWidth"></ion-input>
+                                    mm
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-label>Propellerwellendrehzahl</ion-label>
+                                    <ion-input type="number" v-model="ship.rpm"></ion-input>
+                                    RPM
+                                </ion-item>
+
+                            </ion-list>
+                        </ion-card-content>
+
+                        <ion-card-content v-show="red">
+                            <ion-list>
+
+                                <ion-item>
+                                    <ion-title>Motorraum</ion-title>
+                                </ion-item>
+                                <ion-item>
+                                    <ion-label>Höhe</ion-label>
+                                    <ion-input type="number" v-model="ship.engineHeight"></ion-input>
+                                    mm
+                                </ion-item>
+                                <ion-item>
+                                    <ion-label>Breite</ion-label>
+                                    <ion-input type="number" v-model="ship.engineWidth"></ion-input>
+                                    mm
+                                </ion-item>
+                                <ion-item>
+                                    <ion-label>Tiefe</ion-label>
+                                    <ion-input type="number" v-model="ship.engineDepth"></ion-input>
+                                    mm
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-title>Fundament</ion-title>
+                                </ion-item>
+                                <ion-item>
+                                    <ion-label>Höhe</ion-label>
+                                    <ion-input type="number" v-model="ship.foundationHeight"></ion-input>
+                                    mm
+                                </ion-item>
+                                <ion-item>
+                                    <ion-label>Breite</ion-label>
+                                    <ion-input type="number" v-model="ship.foundationWidth"></ion-input>
+                                    mm
+                                </ion-item>
+                                <ion-item>
+                                    <ion-label>Tiefe</ion-label>
+                                    <ion-input type="number" v-model="ship.foundationDepth"></ion-input>
+                                    mm
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-label>Fundamentstegbreite</ion-label>
+                                    <ion-input type="number" v-model="ship.foundationWay"></ion-input>
+                                    mm
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-title>Getriebehersteller und Typ</ion-title>
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-input type="text" v-model="ship.gearFactory"></ion-input>
+                                </ion-item>
+
+                            </ion-list>
+                        </ion-card-content>
+
+                    </ion-card>
+                </ion-slide>
+
+
                 <!-- Zeitplanung -->
                 <ion-slide>
                     <ion-card>
@@ -564,6 +720,64 @@
                         </ion-card-content>
                     </ion-card>
                 </ion-slide>
+
+                <!--Persönliche Daten-->
+                <ion-slide>
+                    <ion-card>
+                        <ion-card-header>
+                            <ion-card-title>
+                                Persönliche Daten
+                            </ion-card-title>
+                        </ion-card-header>
+                        <ion-card-content>
+                            <ion-list>
+                                <ion-item>
+                                    <ion-title>Bootsname</ion-title>
+                                </ion-item>
+                                <ion-item>
+                                    <ion-input type="text" v-model="ship.name"></ion-input>
+                                </ion-item>
+                                <ion-item>
+                                    <ion-title>Vor- und Nachname</ion-title>
+                                </ion-item>
+                                <ion-item>
+                                    <ion-input type="text" v-model="ship.fullName"></ion-input>
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-title>Adresse</ion-title>
+                                </ion-item>
+                                <ion-item>
+                                    <ion-input type="text" v-model="ship.address"></ion-input>
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-title>E-Mail</ion-title>
+                                </ion-item>
+                                <ion-item>
+                                    <ion-input type="text" v-model="ship.mail"></ion-input>
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-title>Telefonnummer</ion-title>
+                                </ion-item>
+                                <ion-item>
+                                    <ion-input type="text" v-model="ship.phone"></ion-input>
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-title>Hafen und Liegeplatz</ion-title>
+                                </ion-item>
+                                <ion-item>
+                                    <ion-input type="text" v-model="ship.harbor"></ion-input>
+                                </ion-item>
+
+                            </ion-list>
+                        </ion-card-content>
+                    </ion-card>
+                </ion-slide>
+
+
             </ion-slides>
         </ion-content>
         <ion-fab vertical="bottom" horizontal="end" v-show="!loading">
@@ -599,7 +813,9 @@
         IonSelectOption,
         IonListHeader,
         IonTextarea,
-        IonIcon
+        IonIcon,
+        IonItemDivider,
+        IonItemGroup,
         //IonToggle,
         // IonRow, IonCol, IonGrid,
     } from '@ionic/vue';
@@ -649,6 +865,8 @@
             // IonRow, IonCol, IonGrid,
             //IonToggle
             ToggleButton,
+            IonItemDivider,
+            IonItemGroup,
         },
 
         setup() {
@@ -666,10 +884,47 @@
                 ship: {},
                 loading: true,
                 id: this.$route.params.id,
+                propulsionButtons: [
+                    {
+                        name: "Festpropeller",
+                    },
+                    {
+                        name: "Saildrive",
+                    },
+                ],
+                batteryTypeButtons: [
+                    {
+                        name: "AGM",
+                    },
+                    {
+                        name: "Lithium-Ionen",
+                    },
+                ],
+                yesnoButtons: [
+                    {
+                        name: "Ja",
+                    },
+                    {
+                        name: "Nein",
+                    },
+                ]
+
+
             }
         },
         computed: {
-
+            green() {
+                return this.ship.propulsion === 'Festpropeller';
+            },
+            red() {
+                return this.ship.propulsion === 'Saildrive';
+            },
+            blue() {
+                return this.ship.batteryType === 'AGM';
+            },
+            orange() {
+                return this.ship.batteryType === 'Lithium-Ionen';
+            },
         },
         mounted() {
             this.queryShip(this.$route.params.id);
@@ -685,12 +940,12 @@
         methods:
             {
                 queryShip(id) {
-                    this.loading. true;
+                    this.loading.true;
                     shipStorage.getShip("ship_" + id).then(ship => {
                         this.ship = JSON.parse(ship.value);
                     }).finally(() => {
                         this.loading = false;
-                    }) ;
+                    });
                 }
                 ,
                 save() {

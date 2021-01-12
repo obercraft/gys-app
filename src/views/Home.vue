@@ -13,7 +13,7 @@
                     <ion-avatar slot="start">
                         <img src="../assets/ship.png">
                     </ion-avatar>
-                    <ion-label>{{ $filters.formatTime(ship.id)}}</ion-label>
+                    <ion-label>{{ $filters.formatTime(ship.id)}} {{ship.name}}</ion-label>
                     <ion-buttons>
                         <ion-button @click="viewShip(ship.id)">
                             <ion-icon name="document"></ion-icon>
@@ -163,10 +163,15 @@
                 });
             },
             addShip() {
+                let ts = new Date().getTime();
                 let ship = {
-                    id: new Date().getTime(),
-                    name: "test",
-                }
+                    id: ts,
+                    name: "Projekt",
+                    propulsion: "Festpropeller",
+                    batteryType: "AGM",
+                    bowStream: "Nein",
+                    anchor: "Nein"
+                };
                 shipStorage.addShip(ship);
                 shipStorage.getShips();
 

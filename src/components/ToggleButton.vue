@@ -1,64 +1,67 @@
 <template>
-  <ion-buttons>
-    <ion-button
-     style="text-transform:none"
-      v-for="button in buttons"
-      :key="button"
-      :color="getColor(button)"
-      :fill="getFill(button)"
-      @click="setButton(button)"
-      >{{ button.name }}
-    </ion-button>
-  </ion-buttons>
+    <ion-grid>
+        <ion-row>
+            <ion-col class="ion-align-self-center">
+                <ion-button
+                        style="text-transform:none"
+                        v-for="button in buttons"
+                        :key="button"
+                        :color="getColor(button)"
+                        :fill="getFill(button)"
+                        @click="setButton(button)"
+                >{{ button.name }}
+                </ion-button>
+            </ion-col>
+
+        </ion-row>
+    </ion-grid>
 </template>
 
 <script>
-import { IonButtons, IonButton } from "@ionic/vue";
-export default {
-  name: "ToggleButton",
-  components: {IonButtons, IonButton},
-  props: {
-      value: String,
-    // buttons: Array,
-  },
-  data() {
-    return {
-      buttons: [
-        {
-          name: "Festpropeller",
-        },
-        {
-          name: "Saildrive",
-        },
-      ],
-      selected: {},
-    };
-  },
-  mounted() {
-    this.selected = this.buttons[0];
-    this.buttons.forEach(button => {
-        if (button.name === this.value) {
-            this.selected = button;
-        }
-    })
-    
-  },
-  methods: {
-    getColor(button) {
-      return button && this.selected && this.selected.name && button.name == this.selected.name
-        ? "primary"
-        : "secondary";
-    },
-    getFill(button) {
-      return button && this.selected && this.selected.name && button.name == this.selected.name
-        ? "solid"
-        : "outline";
-    },
+    import {IonButton, IonGrid, IonCol, IonRow} from "@ionic/vue";
 
-    setButton(button) {
-        this.selected = button;
-        this.$emit('change', button.name);
-    }
-  },
-};
+    export default {
+        name: "ToggleButton",
+        components: {IonButton, IonGrid, IonCol, IonRow},
+        props: ["target", "buttons", "ship"],
+        data() {
+            return {
+                selected: {},
+            };
+        },
+        mounted() {
+            this.initButtons(this.target);
+        },
+        watch: {
+            'target'(newValue) {
+                this.initButtons(newValue);
+            }
+        },
+        methods: {
+            initButtons(defaultName) {
+                this.selected = this.buttons[0];
+                this.buttons.forEach(button => {
+                    if (button.name === defaultName) {
+                        this.selected = button;
+                    }
+                })
+
+            },
+            getColor(button) {
+                return button && this.selected && this.selected.name && button.name == this.selected.name
+                    ? "primary"
+                    : "secondary";
+            },
+            getFill(button) {
+                return button && this.selected && this.selected.name && button.name == this.selected.name
+                    ? "solid"
+                    : "outline";
+            },
+
+            setButton(button) {
+                this.selected = button;
+                this.$emit('update:target', button.name);
+            },
+        },
+    };
 </script>
