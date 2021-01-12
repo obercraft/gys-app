@@ -143,8 +143,6 @@
 
                             <toggle-button v-model:target="ship.batteryType"
                                            :buttons="batteryTypeButtons"></toggle-button>
-
-
                             <ion-list>
 
                                 <ion-item-group>
