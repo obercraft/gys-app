@@ -2,12 +2,21 @@
     <ion-page>
         <ion-header>
             <ion-toolbar>
-                <ion-title>Green Yacht Solution: Ansicht {{ $filters.formatTime(ship.id)}}</ion-title>
+                <ion-title>Green Yacht Solution: Ansicht {{ship.name}} {{ $filters.formatTime(ship.id)}}</ion-title>
             </ion-toolbar>
         </ion-header>
 
         <ion-content class="background">
-            {{ship}}
+            <ion-card>
+                <ion-card-content>
+                    <ion-list>
+                        <ion-item v-for="d in shipData" :key="d">
+                            <ion-label>{{d.name}}:</ion-label>
+                            <ion-label>{{d.value}}</ion-label>
+                        </ion-item>
+                    </ion-list>
+                </ion-card-content>
+            </ion-card>
         </ion-content>
         <ion-fab vertical="bottom" horizontal="end">
             <ion-fab-button @click="save()">
@@ -25,6 +34,11 @@
         IonHeader, IonToolbar, IonTitle,
         IonContent,
         IonPage,
+        IonCard,
+        IonCardContent,
+        IonList,
+        IonItem,
+        IonLabel
     } from '@ionic/vue';
 
     import {
@@ -52,7 +66,11 @@
             IonToolbar, IonHeader, IonTitle,
             IonContent,
             IonPage,
-
+            IonCard,
+            IonCardContent,
+            IonList,
+            IonItem,
+            IonLabel,
         },
 
 
@@ -64,6 +82,15 @@
         },
         mounted() {
             this.queryShip(this.$route.params.id);
+        },
+        computed: {
+            shipData() {
+                let arr = [];
+                for (let key in this.ship) {
+                    arr.push({name: key, value: this.ship[key]})
+                }
+                return arr;
+            }
         },
         watch: {
             '$route.params.preview': function () {

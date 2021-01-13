@@ -30,6 +30,13 @@ const app = createApp(App)
   .use(IonicVue)
   .use(router);
 
+const packageData =require('../package.json');
+console.log(packageData.version);
+
+app.config.globalProperties.$appData = {
+  version: packageData.version,
+  name: packageData.name,
+};
 app.config.globalProperties.$filters = {
   formatTime(isoString) {
     return !isoString

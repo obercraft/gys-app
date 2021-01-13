@@ -2,6 +2,9 @@
     <ion-page>
         <ion-header>
             <ion-toolbar>
+                <ion-buttons slot="start">
+                    <ion-button @click="openMenu()"><ion-icon name="menu"></ion-icon></ion-button>
+                </ion-buttons>
             <ion-title>Green Yacht Solution: Projekte</ion-title>
             </ion-toolbar>
         </ion-header>
@@ -13,7 +16,14 @@
                     <ion-avatar slot="start">
                         <img src="../assets/ship.png">
                     </ion-avatar>
-                    <ion-label>{{ $filters.formatTime(ship.id)}} {{ship.name}}</ion-label>
+                    <ion-label v-show="ship.name">
+                        <h2>{{ship.name}}</h2>
+                        <p>{{ $filters.formatTime(ship.id)}}</p>
+                    </ion-label>
+                    <ion-label v-show="!ship.name">
+                        {{ $filters.formatTime(ship.id)}}
+                    </ion-label>
+
                     <ion-buttons>
                         <ion-button @click="viewShip(ship.id)">
                             <ion-icon name="document"></ion-icon>
@@ -23,7 +33,7 @@
                             <ion-icon name="pencil"></ion-icon>
                         </ion-button>
 
-                        <ion-button @click="removeShip(ship.id)">
+                        <ion-button @click="removeShip(ship)">
                             <ion-icon name="trash"></ion-icon>
                         </ion-button>
                     </ion-buttons>
@@ -37,7 +47,8 @@
             </div>
 
             <ion-fab vertical="bottom" horizontal="end">
-                <ion-fab-button @click="addShip">
+                <!-- <ion-fab-button @click="addShip"> -->
+                <ion-fab-button @click="addShip()">
                     <ion-icon name="add"></ion-icon>
                 </ion-fab-button>
             </ion-fab>
@@ -61,17 +72,18 @@
         IonAvatar,
         IonIcon,
         IonButtons,
-        IonButton
+        IonButton,
+        menuController,
     } from '@ionic/vue';
     import {defineComponent} from 'vue';
 
     import {addIcons} from "ionicons";
     // import { add, map, warning, earth } from "ionicons/icons";
-    import {add, pencil, trash, documentTextSharp, documentText, documentSharp, document} from "ionicons/icons";
+    import {add, pencil, trash, documentTextSharp, documentText, documentSharp, document, menu} from "ionicons/icons";
 
     import shipStorage from "../model/shipStorage";
 
-    addIcons({add, pencil, trash, documentTextSharp, documentText, documentSharp, document});
+    addIcons({add, pencil, trash, documentTextSharp, documentText, documentSharp, document, menu});
 
 
     export default defineComponent({
@@ -90,7 +102,6 @@
             IonIcon,
             IonButton,
             IonButtons,
-
         },
         data() {
             return {
@@ -122,9 +133,12 @@
                     }
                 });
             },
-            removeShip(id) {
+            removeShip(ship) {
+                let id = ship.id;
+                console.log("del", id);
+                let header = ship.name || 'Projekt vom ' + this.$filters.formatTime( id);
                 alertController.create({
-                    header: 'Projekt vom ' + this.$filters.formatTime( id) + ' löschen?',
+                    header: header + ' löschen?',
                     buttons: [
                         {
                             text: 'Nein',
@@ -162,25 +176,22 @@
                     }
                 });
             },
+            openMenu() {
+                menuController.enable(true, 'mainmenu');
+                menuController.open('mainmenu');
+            },
             addShip() {
-                let ts = new Date().getTime();
-                let ship = {
-                    id: ts,
-                    name: "Projekt",
-                    propulsion: "Festpropeller",
-                    batteryType: "AGM",
-                    bowStream: "Nein",
-                    anchor: "Nein"
-                };
-                shipStorage.addShip(ship);
-                shipStorage.getShips();
-
-                this.$router.push({
-                    name: "Edit", params: {
-                        id: ship.id,
-                    }
+                let ship = shipStorage.createShip();
+                shipStorage.addShip(ship).then(() => {
+                    menuController.close('mainmenu');
+                    this.$router.push({
+                        name: "Edit", params: {
+                            id: ship.id,
+                        }
+                    })
                 })
-            }
+            },
+
         }
     });
 </script>
