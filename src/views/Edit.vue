@@ -12,7 +12,7 @@
         </ion-header>
 
         <ion-content class="background">
-            <ion-slides pager="true" :options="slideOpts" ref="slider" id="editSlider">
+            <ion-slides pager="true" :options="slideOpts" ref="slider" id="editSlider" @ionSlideDidChange="scrollToTop()">
 
                 <!-- Welche Antriebsform ist verbaut?  -->
 
@@ -1024,6 +1024,13 @@
             gotoSlider(sliderNo) {
                 menuController.close('editmenu');
                 this.slider.$el.slideTo(sliderNo);
+            },
+            getContent() {
+                return document.querySelector('ion-content');
+            },
+            scrollToTop() {
+                console.log("scroll");
+                this.getContent().scrollToTop(0);
             }
         }
 
