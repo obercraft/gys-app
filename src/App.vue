@@ -161,11 +161,12 @@
                 store.setSlider(slideNo);
             },
             gotoHome() {
-
-                this.$router.push({
-                    name: "Home",
-                }).then(() => {
-                    menuController.close('mainmenu');
+                menuController.close("editmenu").then(()=> {
+                    this.$router.push({
+                        name: "Home",
+                    }).then(() => {
+                        store.setMainmenuClose();
+                    });
                 });
 
             }
