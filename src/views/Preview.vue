@@ -9,12 +9,24 @@
         <ion-content class="background">
             <ion-card>
                 <ion-card-content>
-                    <ion-list>
-                        <ion-item v-for="d in shipData" :key="d">
-                            <ion-label>{{d.name}}:</ion-label>
-                            <ion-label>{{d.value}}</ion-label>
-                        </ion-item>
-                    </ion-list>
+                    <div v-for="(category, index) in categories" :key="category">
+                        <ion-list>
+                            <ion-item-group>
+                                <ion-list-header class="cardheader">
+                                    <ion-label>{{category}}</ion-label>
+                                </ion-list-header>
+
+                                <ion-item v-for="data in getData(index, ship)" :key="data" v-show="data.show">
+                                    <ion-label>{{data.label}}:
+                                        <span v-if="data.value">
+                                            {{data.value}} {{data.unit}}
+                                        </span>
+                                        <span v-else>-/-</span>
+                                    </ion-label>
+                                </ion-item>
+                            </ion-item-group>
+                        </ion-list>
+                    </div>
                 </ion-card-content>
             </ion-card>
         </ion-content>
@@ -36,9 +48,11 @@
         IonPage,
         IonCard,
         IonCardContent,
-        IonList,
+        IonList, IonListHeader,
         IonItem,
-        IonLabel
+        IonLabel,
+        //IonItemDivider,
+        IonItemGroup,
     } from '@ionic/vue';
 
     import {
@@ -56,6 +70,7 @@
     import {defineComponent} from 'vue';
     import shipStorage from "@/model/shipStorage";
     import {addIcons} from "ionicons";
+    import {categories, descriptions} from "../model/configuration";
 
 
     export default defineComponent({
@@ -69,13 +84,15 @@
             IonCard,
             IonCardContent,
             IonList,
-            IonItem,
+            IonItem, IonListHeader, IonItemGroup,
             IonLabel,
         },
 
 
         data() {
             return {
+                categories: categories,
+                descriptions: descriptions,
                 ship: {},
                 id: this.$route.params.id,
             }
@@ -83,18 +100,9 @@
         mounted() {
             this.queryShip(this.$route.params.id);
         },
-        computed: {
-            shipData() {
-                let arr = [];
-                for (let key in this.ship) {
-                    arr.push({name: key, value: this.ship[key]})
-                }
-                return arr;
-            }
-        },
+        computed: {},
         watch: {
             '$route.params.preview': function () {
-                console.log("saved " + this.$route.params.id);
                 if (this.$route.params.id) {
                     this.queryShip(this.$route.params.id);
                 }
@@ -102,6 +110,25 @@
         },
         methods:
             {
+                getData(categoryId, ship) {
+                    let data = [];
+                    descriptions.forEach(description => {
+                        if (description.categoryId == categoryId) {
+                            let value = description.computed ? description.computed(ship) : ship[description.key];
+                            let show = true;
+                            if (description.show) {
+                                show = description.show(ship);
+                            }
+                            data.push({
+                                label: description.label,
+                                unit: description.unit,
+                                value: value,
+                                show: show,
+                            });
+                        }
+                    });
+                    return data;
+                },
                 queryShip(id) {
                     shipStorage.getShip("ship_" + id).then(ship => {
                         this.ship = JSON.parse(ship.value);

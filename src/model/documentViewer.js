@@ -4,9 +4,9 @@ import { PreviewAnyFile } from '@ionic-native/preview-any-file';
 
 export default {
 
-    preview() {
+    preview(url) {
         //PreviewAnyFile;
-        console.log(PreviewAnyFile.preview("abc"));
+        console.log(PreviewAnyFile.preview(url));
     },
 
     pdf(location, title) {

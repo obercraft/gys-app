@@ -31,7 +31,6 @@ const app = createApp(App)
   .use(router);
 
 const packageData =require('../package.json');
-console.log(packageData.version);
 
 app.config.globalProperties.$appData = {
   version: packageData.version,

@@ -34,7 +34,7 @@
                                     </ion-item-divider>
 
 
-                                    <ion-radio-group v-model="ship.system">
+                                    <ion-radio-group v-model="ship.system" @ionChange="systemChange($event)">
                                         <!--
                                         <ion-item>
                                             <ion-radio value="Green Yacht Solution"></ion-radio>
@@ -77,7 +77,7 @@
                                     </ion-radio-group>
                                     <ion-item>
                                         <ion-label>Anderer:</ion-label>
-                                        <ion-input v-model="ship.systemName"></ion-input>
+                                        <ion-input v-model="ship.systemName" @ionChange="systemNameChange($event)"></ion-input>
                                     </ion-item>
                                 </ion-item-group>
                             </ion-list>
@@ -255,14 +255,14 @@
                                 <ion-item-divider class="divider">
                                     <ion-label>Batterieladeanzeigen</ion-label>
                                 </ion-item-divider>
-                                <ion-radio-group v-model="ship.batteryDisplay">
-                                <ion-item>
-                                    <ion-radio value="Victron Energy"></ion-radio>
-                                    <ion-label>Victron Energy</ion-label>
-                                    <ion-button @click="open('Infoblatt10.pdf')">
-                                        <ion-icon name="information"></ion-icon>
-                                    </ion-button>
-                                </ion-item>
+                                <ion-radio-group v-model="ship.batteryDisplay" @ionChange="batteryDisplayChange($event)">
+                                    <ion-item>
+                                        <ion-radio value="Victron Energy"></ion-radio>
+                                        <ion-label>Victron Energy</ion-label>
+                                        <ion-button @click="open('Infoblatt10.pdf')">
+                                            <ion-icon name="information"></ion-icon>
+                                        </ion-button>
+                                    </ion-item>
                                 </ion-radio-group>
 
                                 <!--
@@ -280,7 +280,6 @@
                                     <ion-item>
                                         <ion-radio value="Waterworld"></ion-radio>
                                         <ion-label>Waterworld</ion-label>
-                                        xxx
                                     </ion-item>
                                 </ion-radio-group>
                                 -->
@@ -348,23 +347,23 @@
                                 </ion-item-divider>
 
 
-                                    <ion-item>
-                                        <ion-label>Solar</ion-label>
-                                        <toggle-button v-model:target="ship.solarPower"
-                                                       :buttons="yesnoButtons"></toggle-button>
-                                    </ion-item>
+                                <ion-item>
+                                    <ion-label>Solar</ion-label>
+                                    <toggle-button v-model:target="ship.solarPower"
+                                                   :buttons="yesnoButtons"></toggle-button>
+                                </ion-item>
 
-                                    <ion-item>
-                                        <ion-label>Landstrom</ion-label>
-                                        <toggle-button v-model:target="ship.landPower"
-                                                       :buttons="yesnoButtons"></toggle-button>
-                                    </ion-item>
+                                <ion-item>
+                                    <ion-label>Landstrom</ion-label>
+                                    <toggle-button v-model:target="ship.landPower"
+                                                   :buttons="yesnoButtons"></toggle-button>
+                                </ion-item>
 
-                                    <ion-item>
-                                        <ion-label>Windgenerator</ion-label>
-                                        <toggle-button v-model:target="ship.windPower"
-                                                       :buttons="yesnoButtons"></toggle-button>
-                                    </ion-item>
+                                <ion-item>
+                                    <ion-label>Windgenerator</ion-label>
+                                    <toggle-button v-model:target="ship.windPower"
+                                                   :buttons="yesnoButtons"></toggle-button>
+                                </ion-item>
 
                                 <ion-item-divider class="divider">
                                     <ion-label>Wird ein Wechselrichter für 220V benötigt?</ion-label>
@@ -386,7 +385,8 @@
 
                                 <ion-item-divider class="divider">
                                     <ion-label>Ist die Beleuchtung auf LED umgerüstet und gibt es weitere
-                                        Einsparmöglichkeiten?</ion-label>
+                                        Einsparmöglichkeiten?
+                                    </ion-label>
                                 </ion-item-divider>
 
                                 <ion-item>
@@ -540,7 +540,7 @@
                 </ion-slide>
 
                 <!-- Maßaufnahme des Motorfundaments -->
-                <ion-slide >
+                <ion-slide>
                     <ion-card>
                         <ion-card-header class="cardheader">
                             <ion-card-title class="cardtitle">
@@ -551,7 +551,8 @@
                         <ion-card-content v-show="green">
                             <ion-list>
                                 <ion-item>
-                                    <ion-label class="ion-text-wrap">Winkel Gerade Motorfundament und Propellerwelle:</ion-label>
+                                    <ion-label class="ion-text-wrap">Winkel Gerade Motorfundament und Propellerwelle:
+                                    </ion-label>
                                     <ion-input type="number" v-model="ship.engineDegree"></ion-input>
                                     &deg;Grad
                                 </ion-item>
@@ -608,7 +609,7 @@
 
                                 <ion-item>
                                     <ion-label class="ion-text-wrap">Weg Welle zum Anfang Fundament:</ion-label>
-                                    <ion-input type="number" v-model="ship.waveDiameter"></ion-input>
+                                    <ion-input type="number" v-model="ship.waveFoundationWay"></ion-input>
                                     mm
                                 </ion-item>
 
@@ -795,7 +796,7 @@
         IonButton,
         IonInput,
         //IonSelect,
-    //IonSelectOption,
+        //IonSelectOption,
         //IonListHeader,
         IonTextarea,
         IonIcon,
@@ -824,7 +825,8 @@
     import shipStorage from "@/model/shipStorage";
     import documentViewer from "../model/documentViewer";
     import {addIcons} from "ionicons";
-    import {store} from "../model/store"
+    import {store} from "../model/store";
+    import {colors} from "../model/configuration";
     // import {DocumentViewer} from '@ionic-native/document-viewer';
 
 
@@ -907,16 +909,16 @@
         },
         computed: {
             green() {
-                return this.ship.propulsion === 'Festpropeller';
+                return colors.green(this.ship);
             },
             red() {
-                return this.ship.propulsion === 'Saildrive';
+                return colors.red(this.ship);
             },
             blue() {
-                return this.ship.batteryType === 'AGM';
+                return colors.red(this.ship);
             },
             orange() {
-                return this.ship.batteryType === 'Lithium-Ionen';
+                return colors.orange(this.ship);
             },
             sliderChange() {
                 return store.getSliderChange();
@@ -926,64 +928,104 @@
             this.queryShip(this.$route.params.id);
         },
         watch: {
-            'sliderChange'(newValue) {
-                console.log("slider", newValue);
+            'ship.propulsion'(newValue, oldValue) {
+                if (newValue && oldValue && newValue !== oldValue) {
+                    this.ship.systemName = null;
+                    this.ship.system = null;
+                }
+            },
+            'ship.batteryType'(newValue, oldValue) {
+                if (newValue && oldValue && newValue !== oldValue) {
+                    this.ship.batteryBrand = null;
+                    this.ship.batteryBrandName = null;
+                }
+            },
+            'ship.batteryBrand'(newValue, oldValue) {
+                if (newValue && oldValue && newValue !== oldValue) {
+                    this.ship.batteryBrandName = null;
+                }
+            },
+            'ship.batteryBrandName'(newValue, oldValue) {
+                if (newValue && oldValue && newValue !== oldValue) {
+                    this.ship.batteryBrand = null;
+                }
+            },
+            'ship.batteryDisplayName'(newValue, oldValue) {
+                if (newValue && oldValue && newValue !== oldValue) {
+                    this.ship.batteryDisplay = null;
+                }
+            },
+
+
+
+
+            'sliderChange'() {
                 this.gotoSlider(store.getSlider());
             },
+            /*
             'ship.system'(newValue) {
                 this.ship.batteryBrand = newValue;
             },
             'ship.systemName'(newValue) {
                 this.ship.batteryBrandName = newValue;
             },
+             */
         },
-        methods:
-            {
-                queryShip(id) {
-                    this.loading.true;
-                    shipStorage.getShip("ship_" + id).then(ship => {
-                        this.ship = JSON.parse(ship.value);
-                    }).finally(() => {
-                        this.loading = false;
-                    });
-                }
-                ,
-                save() {
-                    shipStorage.addShip(this.ship);
-                    this.$router.push({name: "Preview", params: {id: this.ship.id, preview: new Date().getTime()}});
-                }
-                ,
-                back() {
-                    this.slider.$el.getActiveIndex().then(response => {
-                        let index = parseInt(response) - 1;
-                        if (index >= 0) {
-                            this.slider.$el.slideTo(index);
-                        }
-                    });
+        methods: {
 
-                }
-                ,
-                next() {
-                    this.slider.$el.getActiveIndex().then(response => {
-                        let index = parseInt(response) + 1;
-                        this.slider.$el.slideTo(index);
-                    });
-                },
-                open(url) {
-                    //window.open(encodeURI(url),"_system","location=yes");
-                    console.log(url);
-                    documentViewer.preview();
-                }
-                ,
-                openMenu() {
-                    menuController.enable(true, 'editmenu');
-                    menuController.open('editmenu');
-                },
-                gotoSlider(sliderNo) {
-                    menuController.close('editmenu');
-                    this.slider.$el.slideTo(sliderNo);
-                }
+            systemChange() {
+                this.ship.systemName = null;
+            },
+            systemNameChange() {
+                this.ship.system = null;
+            },
+            batteryDisplayChange() {
+                this.ship.batteryDisplayName = null;
+            },
+
+            queryShip(id) {
+                this.loading.true;
+                shipStorage.getShip("ship_" + id).then(ship => {
+                    this.ship = JSON.parse(ship.value);
+                }).finally(() => {
+                    this.loading = false;
+                });
             }
+            ,
+            save() {
+                shipStorage.addShip(this.ship);
+                this.$router.push({name: "Preview", params: {id: this.ship.id, preview: new Date().getTime()}});
+            }
+            ,
+            back() {
+                this.slider.$el.getActiveIndex().then(response => {
+                    let index = parseInt(response) - 1;
+                    if (index >= 0) {
+                        this.slider.$el.slideTo(index);
+                    }
+                });
+
+            }
+            ,
+            next() {
+                this.slider.$el.getActiveIndex().then(response => {
+                    let index = parseInt(response) + 1;
+                    this.slider.$el.slideTo(index);
+                });
+            },
+            open(url) {
+                documentViewer.preview(url);
+            }
+            ,
+            openMenu() {
+                menuController.enable(true, 'editmenu');
+                menuController.open('editmenu');
+            },
+            gotoSlider(sliderNo) {
+                menuController.close('editmenu');
+                this.slider.$el.slideTo(sliderNo);
+            }
+        }
 
     })
     ;

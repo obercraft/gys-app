@@ -135,7 +135,6 @@
             },
             removeShip(ship) {
                 let id = ship.id;
-                console.log("del", id);
                 let header = ship.name || 'Projekt vom ' + this.$filters.formatTime( id);
                 alertController.create({
                     header: header + ' löschen?',
@@ -145,7 +144,7 @@
                             role: 'cancel',
                             cssClass: 'secondary',
                             handler: () => {
-                                // console.log('Confirm Cancel')
+                                // empty
                             },
                         },
                         {

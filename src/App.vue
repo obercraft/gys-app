@@ -6,7 +6,7 @@
                 <ion-toolbar color="primary">
                     <ion-title>{{appData.name}}</ion-title>
                     <ion-buttons slot="end">
-                        <ion-button>{{appData.version}}</ion-button>
+                        <ion-button href="https://github.com/obercraft/gys-app" target="_blank">{{appData.version}}</ion-button>
                     </ion-buttons>
                 </ion-toolbar>
             </ion-header>
@@ -97,7 +97,11 @@
                             Persönliche Daten
                         </ion-label>
                     </ion-item>
-
+                    <ion-item button @click="gotoHome()">
+                        <ion-label>
+                            Abbrechen
+                        </ion-label>
+                    </ion-item>
 
 
                 </ion-list>
@@ -150,11 +154,20 @@
                         name: "Edit", params: {
                             id: ship.id,
                         }
-                    })
+                    });
                 })
             },
             gotoSlide(slideNo) {
                 store.setSlider(slideNo);
+            },
+            gotoHome() {
+
+                this.$router.push({
+                    name: "Home",
+                }).then(() => {
+                    menuController.close('mainmenu');
+                });
+
             }
         }
     });
@@ -181,12 +194,15 @@
     .cardtitle {
         color: white;
     }
+
     .green {
         color: green;
     }
+
     .bigslide {
         min-width: 600px;
     }
+
     .whitespace {
         white-space: normal;
     }
