@@ -1025,12 +1025,9 @@
                 menuController.close('editmenu');
                 this.slider.$el.slideTo(sliderNo);
             },
-            getContent() {
-                return document.querySelector('ion-content');
-            },
             scrollToTop() {
-                console.log("scroll");
-                this.getContent().scrollToTop(0);
+                let content = document.querySelector('ion-content');
+                content.scrollToTop(0);
             }
         }
 

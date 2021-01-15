@@ -17,6 +17,12 @@
                             Neues Projekt
                         </ion-label>
                     </ion-item>
+                    <ion-item button @click="exportShips()">
+                        <ion-label>
+                            Exportieren
+                        </ion-label>
+                    </ion-item>
+
                 </ion-list>
             </ion-content>
         </ion-menu>
@@ -131,6 +137,7 @@
     import {defineComponent} from 'vue';
     import shipStorage from "./model/shipStorage";
     import {store} from "@/model/store";
+    import documentViewer from "@/model/documentViewer";
 
     export default defineComponent({
         name: 'App',
@@ -169,6 +176,9 @@
                     });
                 });
 
+            },
+            exportShips() {
+                documentViewer.chooseFile();
             }
         }
     });
