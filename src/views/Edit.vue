@@ -15,7 +15,6 @@
     </ion-header>
 
     <ion-content class="background">
-      {{ fileResult }}
       <ion-slides
         pager="true"
         :options="slideOpts"

@@ -44,7 +44,6 @@
         </ion-item>
       </ion-list>
 
-      {{ directories }} {{ applicationDirectory }} YYY
       <div v-show="!ships || ships.length == 0">keine Schiffe gefunden</div>
 
       <ion-fab vertical="bottom" horizontal="end">
